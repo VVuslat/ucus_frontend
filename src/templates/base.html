@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Uçak bileti arama ve karşılaştırma platformu">
+    <title>{% block title %}Uçuş Arama{% endblock %} - Uçuş Frontend</title>
+    
+    <!-- TailwindCSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/tailwind.css') }}">
+    
+    <style>
+        /* Özel stiller ve animasyonlar */
+        .fade-in {
+            animation: fadeIn 0.3s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .modal-backdrop {
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+        
+        /* Focus görünürlüğü - erişilebilirlik */
+        *:focus {
+            outline: 2px solid #3b82f6;
+            outline-offset: 2px;
+        }
+        
+        /* Skip to main content link */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: #000;
+            color: white;
+            padding: 8px;
+            text-decoration: none;
+            z-index: 100;
+        }
+        
+        .skip-link:focus {
+            top: 0;
+        }
+    </style>
+    
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Skip to main content - erişilebilirlik -->
+    <a href="#main-content" class="skip-link">Ana içeriğe geç</a>
+    
+    <!-- Header -->
+    <header class="bg-blue-600 text-white shadow-lg" role="banner">
+        <div class="container mx-auto px-4 py-4">
+            <nav class="flex justify-between items-center" role="navigation" aria-label="Ana navigasyon">
+                <h1 class="text-2xl font-bold">
+                    <a href="/" class="hover:text-blue-200 transition">✈️ Uçuş Arama</a>
+                </h1>
+                <div class="space-x-4">
+                    <a href="/" class="hover:text-blue-200 transition" aria-label="Ana sayfa">Ana Sayfa</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+    
+    <!-- Main Content -->
+    <main id="main-content" class="container mx-auto px-4 py-8" role="main">
+        {% if error %}
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 fade-in" role="alert" aria-live="polite">
+            <strong class="font-bold">Hata!</strong>
+            <span class="block sm:inline">{{ error }}</span>
+        </div>
+        {% endif %}
+        
+        {% block content %}{% endblock %}
+    </main>
+    
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white mt-12" role="contentinfo">
+        <div class="container mx-auto px-4 py-6 text-center">
+            <p>&copy; 2025 Uçuş Frontend. MYK Yazılım Geliştirici Seviye 5 uyumlu proje.</p>
+            <p class="text-sm text-gray-400 mt-2">Flask + Jinja2 ile geliştirilmiştir.</p>
+        </div>
+    </footer>
+    
+    <!-- Modal Container - JavaScript ile doldurulur -->
+    <div id="modal-container" class="hidden fixed inset-0 z-50" aria-hidden="true" role="dialog" aria-modal="true">
+        <div class="modal-backdrop absolute inset-0" id="modal-backdrop"></div>
+        <div class="flex items-center justify-center min-h-screen px-4">
+            <div id="modal-content" class="bg-white rounded-lg shadow-xl relative z-10 w-full max-w-2xl max-h-screen overflow-y-auto">
+                <!-- Modal içeriği buraya yüklenecek -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- JavaScript -->
+    <script src="{{ url_for('static', filename='js/ui.js') }}"></script>
+    
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

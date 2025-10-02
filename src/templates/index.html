@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+
+{% block title %}Uçuş Ara{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <!-- Hero Section -->
+    <section class="text-center mb-8 fade-in">
+        <h2 class="text-4xl font-bold text-gray-800 mb-4">En Uygun Uçak Biletini Bulun</h2>
+        <p class="text-xl text-gray-600">Hızlı arama, anlık karşılaştırma, en iyi fiyatlar</p>
+    </section>
+    
+    <!-- Arama Formu -->
+    <section class="bg-white rounded-lg shadow-lg p-6 md:p-8 fade-in" aria-labelledby="search-form-title">
+        <h3 id="search-form-title" class="text-2xl font-semibold text-gray-800 mb-6">Uçuş Ara</h3>
+        
+        <form method="POST" action="{{ url_for('flights') }}" novalidate class="space-y-6">
+            {{ form.hidden_tag() }}
+            
+            <!-- Yön Seçimi -->
+            <div class="mb-4">
+                <label for="trip_type" class="block text-sm font-medium text-gray-700 mb-2">
+                    {{ form.trip_type.label.text }}
+                </label>
+                {{ form.trip_type(class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent") }}
+                {% if form.trip_type.errors %}
+                    <p class="mt-1 text-sm text-red-600" role="alert">{{ form.trip_type.errors[0] }}</p>
+                {% endif %}
+            </div>
+            
+            <!-- Kalkış ve Varış -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label for="origin" class="block text-sm font-medium text-gray-700 mb-2">
+                        {{ form.origin.label.text }}
+                    </label>
+                    {{ form.origin(class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent uppercase") }}
+                    {% if form.origin.errors %}
+                        <p class="mt-1 text-sm text-red-600" role="alert">{{ form.origin.errors[0] }}</p>
+                    {% endif %}
+                    <p class="mt-1 text-xs text-gray-500">Örnek: IST, ESB, ADB</p>
+                </div>
+                
+                <div>
+                    <label for="destination" class="block text-sm font-medium text-gray-700 mb-2">
+                        {{ form.destination.label.text }}
+                    </label>
+                    {{ form.destination(class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent uppercase") }}
+                    {% if form.destination.errors %}
+                        <p class="mt-1 text-sm text-red-600" role="alert">{{ form.destination.errors[0] }}</p>
+                    {% endif %}
+                    <p class="mt-1 text-xs text-gray-500">Örnek: IST, ESB, ADB</p>
+                </div>
+            </div>
+            
+            <!-- Tarihler -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label for="departure_date" class="block text-sm font-medium text-gray-700 mb-2">
+                        {{ form.departure_date.label.text }}
+                    </label>
+                    {{ form.departure_date(class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent") }}
+                    {% if form.departure_date.errors %}
+                        <p class="mt-1 text-sm text-red-600" role="alert">{{ form.departure_date.errors[0] }}</p>
+                    {% endif %}
+                </div>
+                
+                <div id="return-date-container">
+                    <label for="return_date" class="block text-sm font-medium text-gray-700 mb-2">
+                        {{ form.return_date.label.text }}
+                    </label>
+                    {{ form.return_date(class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent") }}
+                    {% if form.return_date.errors %}
+                        <p class="mt-1 text-sm text-red-600" role="alert">{{ form.return_date.errors[0] }}</p>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Submit Butonu -->
+            <div class="text-center">
+                <button 
+                    type="submit" 
+                    class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-3 rounded-lg transition duration-200 shadow-lg hover:shadow-xl"
+                    aria-label="Uçuş ara"
+                >
+                    🔍 Uçuş Ara
+                </button>
+            </div>
+        </form>
+    </section>
+    
+    <!-- Bilgilendirme -->
+    <section class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="bg-blue-50 p-4 rounded-lg text-center">
+            <div class="text-3xl mb-2">⚡</div>
+            <h4 class="font-semibold text-gray-800 mb-1">Hızlı Arama</h4>
+            <p class="text-sm text-gray-600">Anlık sonuçlar ve karşılaştırma</p>
+        </div>
+        <div class="bg-green-50 p-4 rounded-lg text-center">
+            <div class="text-3xl mb-2">💰</div>
+            <h4 class="font-semibold text-gray-800 mb-1">En İyi Fiyat</h4>
+            <p class="text-sm text-gray-600">Rekabetçi fiyat garantisi</p>
+        </div>
+        <div class="bg-purple-50 p-4 rounded-lg text-center">
+            <div class="text-3xl mb-2">🔒</div>
+            <h4 class="font-semibold text-gray-800 mb-1">Güvenli</h4>
+            <p class="text-sm text-gray-600">Verileriniz güvende</p>
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    // Dönüş tarih alanını yön seçimine göre etkinleştir/devre dışı bırak
+    document.addEventListener('DOMContentLoaded', function() {
+        const tripType = document.getElementById('trip_type');
+        const returnDateContainer = document.getElementById('return-date-container');
+        const returnDateInput = document.getElementById('return_date');
+        
+        function toggleReturnDate() {
+            if (tripType.value === 'one-way') {
+                returnDateInput.disabled = true;
+                returnDateContainer.style.opacity = '0.5';
+            } else {
+                returnDateInput.disabled = false;
+                returnDateContainer.style.opacity = '1';
+            }
+        }
+        
+        tripType.addEventListener('change', toggleReturnDate);
+        toggleReturnDate(); // İlk yüklemede çalıştır
+    });
+</script>
+{% endblock %}

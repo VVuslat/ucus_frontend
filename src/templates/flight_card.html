@@ -1,0 +1,95 @@
+<!-- Uçuş Kartı - tek bir uçuşun bilgilerini gösterir -->
+<article class="bg-white rounded-lg shadow hover:shadow-lg transition p-4 md:p-6 fade-in" aria-labelledby="flight-{{ flight.id }}">
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+        <!-- Havayolu ve Uçuş Numarası -->
+        <div class="md:col-span-3">
+            <div class="flex items-center space-x-3">
+                <div class="bg-blue-100 text-blue-600 rounded-full w-12 h-12 flex items-center justify-center font-bold text-lg">
+                    {{ flight.airline[:2].upper() }}
+                </div>
+                <div>
+                    <h3 id="flight-{{ flight.id }}" class="font-semibold text-gray-800">{{ flight.airline }}</h3>
+                    <p class="text-sm text-gray-500">{{ flight.flightNumber }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Kalkış ve Varış Bilgileri -->
+        <div class="md:col-span-5">
+            <div class="flex items-center justify-between">
+                <!-- Kalkış -->
+                <div class="text-center">
+                    <p class="text-2xl font-bold text-gray-800">{{ flight.departure | format_datetime('time') }}</p>
+                    <p class="text-sm text-gray-600">{{ flight.origin }}</p>
+                </div>
+                
+                <!-- Süre ve Aktarma -->
+                <div class="flex-1 mx-4">
+                    <div class="relative">
+                        <div class="border-t-2 border-gray-300 relative">
+                            <div class="absolute left-0 top-0 w-2 h-2 bg-gray-300 rounded-full -mt-1"></div>
+                            <div class="absolute right-0 top-0 w-2 h-2 bg-gray-300 rounded-full -mt-1"></div>
+                            <div class="absolute left-1/2 transform -translate-x-1/2 -mt-3 text-xs text-gray-500 whitespace-nowrap">
+                                {{ flight.duration | format_duration }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center mt-3">
+                        {% if flight.stops == 0 %}
+                            <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">Direkt</span>
+                        {% elif flight.stops == 1 %}
+                            <span class="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded">1 Aktarma</span>
+                        {% else %}
+                            <span class="text-xs bg-orange-100 text-orange-800 px-2 py-1 rounded">{{ flight.stops }} Aktarma</span>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- Varış -->
+                <div class="text-center">
+                    <p class="text-2xl font-bold text-gray-800">{{ flight.arrival | format_datetime('time') }}</p>
+                    <p class="text-sm text-gray-600">{{ flight.destination }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Fiyat ve Detaylar Butonu -->
+        <div class="md:col-span-4 text-center md:text-right space-y-2">
+            <div>
+                <p class="text-3xl font-bold text-blue-600">{{ flight.price | format_price(flight.currency) }}</p>
+                <p class="text-xs text-gray-500">{{ flight.policy }}</p>
+            </div>
+            <button 
+                onclick="openFlightModal('{{ flight.id }}')"
+                class="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded-lg transition duration-200"
+                aria-label="Uçuş {{ flight.flightNumber }} detaylarını görüntüle"
+            >
+                Detaylar
+            </button>
+        </div>
+    </div>
+    
+    <!-- Ek Bilgiler (Mobil için daraltılabilir) -->
+    <div class="mt-4 pt-4 border-t border-gray-200 text-sm text-gray-600">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
+            <div>
+                <span class="font-medium">Uçak:</span> {{ flight.aircraft }}
+            </div>
+            {% if flight.cabin_class %}
+            <div>
+                <span class="font-medium">Sınıf:</span> {{ flight.cabin_class }}
+            </div>
+            {% endif %}
+            {% if flight.baggage %}
+            <div>
+                <span class="font-medium">Bagaj:</span> {{ flight.baggage }}
+            </div>
+            {% endif %}
+            {% if flight.available_seats %}
+            <div>
+                <span class="font-medium">Kalan Koltuk:</span> {{ flight.available_seats }}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</article>
